@@ -1,0 +1,31 @@
+The main application for Authorization.
+
+Please see the README in the Payments Parent repo for more information.
+
+When running the jar, it is necessary to provide the profile, as below. For the valid profiles see the names of the properties files. example:
+	java -jar -Dspring.profiles.active=dev authorization-main.jar
+	
+In order to develop for this project, you must install Lombok to your IDE. Simply download it, run the installer, and select your IDE.
+	https://projectlombok.org/download
+
+Note there are currently two different @Value annotations used in this project (never in the same class).
+	org.springframework.beans.factory.annotation.Value - Spring's property injection annotation
+	lombok.Value - the version of Lombok's @Data annotation for immutable classes
+
+The local swagger endpoint is <host>:<port>/swagger-ui/index.html. For example:
+	http://localhost:8080/swagger-ui/index.html
+
+For example requests, see the Swagger ui or the postman collection.
+
+All requests require OAuth (except Swagger which requires basic auth), Nicholas can provide you the credentials for dev. 
+Do note that the child guid must be unique for each request. I suggest just adding/deleting random numbers and letters to achieve that for dev purposes.
+
+When running on your local machine, it is not possible to access the keyvault. Thus we need to provide the following vm arguments.
+The values for the arguments can be found in the non-prod keyvault under the same name (minus of course "-D"). Those secrets can not be committed to the repo.
+	-Dpay09.app.dev.password=
+	-Dstpay.service.auth.key=
+	-Dstpay.service.auth.secret=
+	-Dcard-consent-service-username=
+	-Dcard-consent-service-password=
+	
+Note, in order for MIT to work from your local, you must add the Staples Root cert into the keystore for the java version used by your IDE.
