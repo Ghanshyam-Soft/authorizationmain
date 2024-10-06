@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<Properties>
+		<Property name="rootLoggingLevel">info</Property>
+		<Property name="log-path">/var/opt/appworkr/logs</Property>
+		<Property name="logBaseName">authorization-main</Property>
+	</Properties>
+
+	<Appenders>
+		<Console name="Console" target="SYSTEM_OUT">
+			<PatternLayout>
+				<pattern>
+					%d [%t] %-5p (%F:%L) - %m%n
+				</pattern>
+			</PatternLayout>
+		</Console>
+		<RollingRandomAccessFile
+			name="rollingRandomFileInfo"
+			fileName="${log-path}/${logBaseName}-info.log"
+			filePattern="${log-path}/archived/${logBaseName}-info%d{MM-dd-yyyy}-%i.log.gz">
+			<LevelRangeFilter minLevel="INFO" maxLevel="INFO"
+				onMatch="ACCEPT" onMismatch="DENY" />
+			<PatternLayout>
+				<pattern>
+					%d [%t] %-5p (%F:%L) - %m%n
+				</pattern>
+			</PatternLayout>
+			<Policies>
+				<SizeBasedTriggeringPolicy size="20 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="99">
+				<!-- Nested conditions: the inner condition is only evaluated on files 
+					for which the outer conditions are true. -->
+				<Delete basePath="${log-path}" maxDepth="2">
+					<IfFileName glob="*/${logBaseName}-info*.log.gz">
+						<IfLastModified age="90d">
+						</IfLastModified>
+					</IfFileName>
+				</Delete>
+			</DefaultRolloverStrategy>
+		</RollingRandomAccessFile>
+		<RollingRandomAccessFile
+			name="rollingRandomFileError"
+			fileName="${log-path}/${logBaseName}.log"
+			filePattern="${log-path}/archived/${logBaseName}-error-%d{MM-dd-yyyy}-%i.log.gz">
+			<PatternLayout>
+				<pattern>
+					%d [%t] %-5p (%F:%L) - %m%n
+				</pattern>
+			</PatternLayout>
+			<Policies>
+				<SizeBasedTriggeringPolicy size="20 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="99">
+				<!-- Nested conditions: the inner condition is only evaluated on files 
+					for which the outer conditions are true. -->
+				<Delete basePath="${log-path}" maxDepth="2">
+					<IfFileName glob="*/${logBaseName}-error*.log.gz">
+						<IfLastModified age="90d">
+						</IfLastModified>
+					</IfFileName>
+				</Delete>
+			</DefaultRolloverStrategy>
+		</RollingRandomAccessFile>
+		<RollingRandomAccessFile
+			name="rollingRandomFileDebug"
+			fileName="${log-path}/${logBaseName}-debug.log"
+			filePattern="${log-path}/archived/${logBaseName}-debug%d{MM-dd-yyyy}-%i.log.gz">
+			<LevelRangeFilter minLevel="ERROR" maxLevel="DEBUG"
+				onMatch="ACCEPT" onMismatch="DENY" />
+			<PatternLayout>
+				<pattern>
+					%d [%t] %-5p (%F:%L) - %m%n
+				</pattern>
+			</PatternLayout>
+			<Policies>
+				<SizeBasedTriggeringPolicy size="20 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="99">
+				<!-- Nested conditions: the inner condition is only evaluated on files 
+					for which the outer conditions are true. -->
+				<Delete basePath="${log-path}" maxDepth="2">
+					<IfFileName glob="*/${logBaseName}-debug*.log.gz">
+						<IfLastModified age="90d">
+						</IfLastModified>
+					</IfFileName>
+				</Delete>
+			</DefaultRolloverStrategy>
+		</RollingRandomAccessFile>
+		<RollingRandomAccessFile
+			name="rollingRandomFileAudit"
+			fileName="${log-path}/${logBaseName}-audit.log"
+			filePattern="${log-path}/archived/${logBaseName}-audit%d{MM-dd-yyyy}-%i.log.gz">
+			<PatternLayout>
+				<pattern>
+					%d [%t] %-5p (%F:%L) - %m%n
+				</pattern>
+			</PatternLayout>
+			<Policies>
+				<SizeBasedTriggeringPolicy size="20 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="99">
+				<!-- Nested conditions: the inner condition is only evaluated on files 
+					for which the outer conditions are true. -->
+				<Delete basePath="${log-path}" maxDepth="2">
+					<IfFileName glob="*/${logBaseName}-audit*.log.gz">
+						<IfLastModified age="90d">
+						</IfLastModified>
+					</IfFileName>
+				</Delete>
+			</DefaultRolloverStrategy>
+		</RollingRandomAccessFile>
+	</Appenders>
+
+	<Loggers>
+		<Logger name="com.staples">
+			<AppenderRef ref="rollingRandomFileInfo" level="info" />
+			<AppenderRef ref="rollingRandomFileError" level="error" />
+			<AppenderRef ref="rollingRandomFileDebug" level="debug" />
+		</Logger>
+		<Logger name="org.springframework">
+			<AppenderRef ref="rollingRandomFileError" level="error" />
+		</Logger>
+		<Logger name="org.springframework.web.servlet">
+			<AppenderRef ref="rollingRandomFileError" level="warn" />
+		</Logger>
+		<Logger name="audit-log" level="info">
+			<AppenderRef ref="rollingRandomFileAudit" level="info" />
+		</Logger>		
+		<Root level="${rootLoggingLevel}" additivity="true">
+			<AppenderRef ref="Console" />
+		</Root>
+	</Loggers>
+</configuration>
